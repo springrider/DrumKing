@@ -891,6 +891,9 @@
     "loseClip": {
       "__uuid__": "eb7057ec-33cf-4eed-9f89-cab3df4d934c"
     },
+    "countDown": {
+      "__uuid__": "c4936a5a-646a-4072-aab0-58e394ca7b41"
+    },
     "metronomeUp": {
       "__uuid__": "65051b68-5a72-4bc1-9a7c-50ce38a7e73d"
     },

@@ -29,6 +29,10 @@ cc.Class({
             default: null,
             url: cc.AudioClip
         },
+        countDown: {
+            default: null,
+            url: cc.AudioClip
+        },
 
 
         metronomeUp: {
@@ -46,7 +50,12 @@ cc.Class({
         // defaults, set visually when attaching this script to the Canvas
         text: 'Score:'
     },
+  
+    playCountDown: function(){
 
+        cc.audioEngine.play(this.countDown);
+        this.latencyCheck = Date.now()
+    },
 
     playSound: function(){
       //console.log("play");
@@ -56,6 +65,7 @@ cc.Class({
       let delta = this.beatTime[this.beatCount][1] - this.elapsedMs;
       console.log("executed:"+this.executed+",elaps:"+this.elapsedMs+",beattime:"+this.beatTime[this.beatCount][1]+",diff:"+delta)
       this.startTime -= delta;
+      //this.startTime += this.latency;
       console.log(Date.now()-this.lastTime);
       this.lastTime = Date.now();
       if(this.beatCount % 4 ==0){
@@ -76,7 +86,6 @@ cc.Class({
     
     hitTest: function(){
       
-      
       let now = Date.now();
       let gap = 10000;
       let beat = 0;
@@ -85,7 +94,6 @@ cc.Class({
         if(i < 0 || i >= this.totalBpm) continue;
 
         let tmpGap = Math.abs(this.elapsedMs  - this.beatTime[i][1])
-        console.log(tmpGap)
         if( tmpGap < gap){
             gap = tmpGap;
             beat = i;
@@ -129,13 +137,13 @@ cc.Class({
     startBeat: function(){
         //this.timer = setInterval(this.playSound.bind(this), this.lap);
         this.beatCallback = this.playSound.bind(this)
-        this.schedule(this.beatCallback, this.lap/1000);
+        this.schedule(this.beatCallback, this.lap/1000, cc.macro.REPEAT_FOREVER, 0);
         this.startTime = Date.now()
     },
 
     prepare: function(){
 
-        this.schedule(this.playSound.bind(this), this.lap/1000, 3, 0)
+        this.schedule(this.playCountDown.bind(this), this.lap/1000, 3, 0)
         /*
         setTimeout(this.playSound.bind(this), 0);
         setTimeout(this.playSound.bind(this), 1*this.lap);
@@ -151,6 +159,7 @@ cc.Class({
     },
 
     levelFinish: function () {
+      this.onGoing = false;
       this.slient();
       let scores = Object.values(this.beatScore)
       let score = Math.ceil(scores.reduce( (a,b) => a + b, 0 ) / scores.length);
@@ -179,6 +188,11 @@ cc.Class({
     },
 
     initLevel: function () {
+        if(this.onGoing){
+          console.log("game is ongoing");
+          return;
+        }
+        this.onGoing = true; 
         this.drumAnim.node.active = false;
         this.lastTime = Date.now();
         this.beatCount = 0;
@@ -202,7 +216,8 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
-
+        this.onGoing = false;
+        this.latency = 129; // for keyboard, it's 0.  for real drum, it is -129.17, at least for mine
         WebMidi.enable((err) => {
         this.drumConn.string = "connect your drum pls"    
 
@@ -217,12 +232,18 @@ cc.Class({
         this.drumDev.addListener('noteon', "all",
           (e) =>{
             let note = e.note.name + e.note.octave;
-            if(note == 'C1'){
+            if(note == 'D#2'){
                 this.initLevel();
             }
             if(note == 'D1'){
                 this.hitTest()
             }
+            if(note == 'A#1'){
+                let latency = Date.now() - this.latencyCheck
+                console.log('latency:'+latency);
+ 
+            }
+
             console.log("Received 'noteon' message (" + note + ").");
           }
         );
@@ -239,6 +260,7 @@ cc.Class({
         cc.Audio.useWebAudio = true;
         cc.audioEngine.preload(this.metronome,this.loadCB);
         cc.audioEngine.preload(this.metronomeUp,this.loadCB);
+        cc.audioEngine.preload(this.countDown,this.loadCB);
         this.resultLabel.string = "Tap i to start";
         cc.loader.loadRes("drums/5", cc.SpriteFrame, (err, spriteFrame) => {
           this.badFrame = spriteFrame;
@@ -290,6 +312,12 @@ cc.Class({
                 console.log('Press a key');
                 this.initLevel();
                 break;
+            case cc.KEY.j:
+                let latency = Date.now() - this.latencyCheck
+                console.log('latency:'+latency);
+      
+                break;
+
 
 
         }
