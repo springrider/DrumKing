@@ -11,4 +11,6 @@ you can simulate the drum input by pressing:
 "i" for start game;
 "a" for the beat;
 
+Engine && IDE: Cocos Creator.
+
 

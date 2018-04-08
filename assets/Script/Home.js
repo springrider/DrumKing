@@ -44,6 +44,12 @@ cc.Class({
             url: cc.AudioClip
         },
 
+        music: {
+            default: null,
+            url: cc.AudioClip
+        },
+
+
         drumAnim: cc.Sprite,
         drum: cc.Sprite,
         beatPrefab: cc.Prefab,
@@ -140,6 +146,15 @@ cc.Class({
         this.schedule(this.beatCallback, this.lap/1000, cc.macro.REPEAT_FOREVER, 0);
         this.startTime = Date.now()
     },
+    playMusic: function(){
+      if(this.onGoing) return;
+      this.onGoing = true;
+      var audioID = cc.audioEngine.play(this.music);
+        this.scheduleOnce(()=>{
+          cc.audioEngine.stop(audioID);
+          this.onGoing = false;
+        }, 67);
+    },
 
     prepare: function(){
 
@@ -228,20 +243,31 @@ cc.Class({
             if(WebMidi.inputs.length > 0){
               this.drumConn.string = "drum connected!" 
               this.drumDev = WebMidi.inputs[0];   
+              this.playM = 0;
               // Listen for a 'note on' message on all channels
         this.drumDev.addListener('noteon', "all",
           (e) =>{
             let note = e.note.name + e.note.octave;
-            if(note == 'D#2'){
-                this.initLevel();
-            }
             if(note == 'D1'){
                 this.hitTest()
             }
-            if(note == 'A#1'){
+            else if(note == 'A1'){
+              this.playM++;
+            }
+            else if(note == 'D#2'){
+                this.initLevel();
+            }
+            else if(note == 'A#1'){
                 let latency = Date.now() - this.latencyCheck
                 console.log('latency:'+latency);
  
+            }
+            if(note != 'A1'){
+              this.playM = 0;
+            }
+            if(this.playM >=5){
+              this.playMusic();
+              this.playM = 0;
             }
 
             console.log("Received 'noteon' message (" + note + ").");
@@ -261,6 +287,7 @@ cc.Class({
         cc.audioEngine.preload(this.metronome,this.loadCB);
         cc.audioEngine.preload(this.metronomeUp,this.loadCB);
         cc.audioEngine.preload(this.countDown,this.loadCB);
+        cc.audioEngine.preload(this.music,this.loadCB);
         this.resultLabel.string = "Tap i to start";
         cc.loader.loadRes("drums/5", cc.SpriteFrame, (err, spriteFrame) => {
           this.badFrame = spriteFrame;

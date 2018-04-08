@@ -900,6 +900,9 @@
     "metronome": {
       "__uuid__": "f1507c56-732c-4007-aa36-df71297146d7"
     },
+    "music": {
+      "__uuid__": "b8c513ba-97c8-49f7-8325-6edee60a3566"
+    },
     "drumAnim": {
       "__id__": 13
     },
