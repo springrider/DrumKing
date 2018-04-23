@@ -115,16 +115,16 @@ cc.Class({
       else if( gap < 55){
         score = 90;
       }
-      else if(gap < 50){
+      else if(gap < 90){
         score = 80;
       }
-      else if(gap < 70){
-        score = 80;
+      else if(gap < 100){
+        score = 70;
       }
       else{
         score = 80 - (gap - 70)
-        if(score < 0 ){
-            score = 0;
+        if(score < 20 ){
+            score = 20;
         }
       }
       console.log("count:"+i+"!!!!Score:"+score)
@@ -179,7 +179,7 @@ cc.Class({
       let scores = Object.values(this.beatScore)
       let score = Math.ceil(scores.reduce( (a,b) => a + b, 0 ) / scores.length);
       this.scoreVal.string = score;
-      if(score > 70){
+      if(score >= 55){
         this.resultLabel.node.active = true
         this.resultLabel.string = "Congrats! Tap i to the next level";
         this.bpm += 5;
