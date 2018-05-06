@@ -153,7 +153,7 @@ cc.Class({
         this.scheduleOnce(()=>{
           cc.audioEngine.stop(audioID);
           this.onGoing = false;
-        }, 67);
+        }, 182);
     },
 
     prepare: function(){
