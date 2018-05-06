@@ -360,7 +360,7 @@ cc.Class({
         */
         //this.beat1.setPosition(p)
     },
-/*
+/* 
     lateUpdate: function() {
         let context = cc.sys.__audioSupport.context;
         if (context.state === 'suspended') {
