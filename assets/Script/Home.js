@@ -153,7 +153,7 @@ cc.Class({
         this.scheduleOnce(()=>{
           cc.audioEngine.stop(audioID);
           this.onGoing = false;
-        }, 182);
+        }, 175);
     },
 
     prepare: function(){
@@ -228,7 +228,6 @@ cc.Class({
         }
         console.log(this.beatTime)
     },
-2
     // use this for initialization
     onLoad: function () {
         this.onGoing = false;
@@ -361,7 +360,7 @@ cc.Class({
         */
         //this.beat1.setPosition(p)
     },
-
+/*
     lateUpdate: function() {
         let context = cc.sys.__audioSupport.context;
         if (context.state === 'suspended') {
@@ -369,5 +368,5 @@ cc.Class({
             console.log(context.state);
         }
     }
-
+*/
 });
