@@ -228,7 +228,7 @@ cc.Class({
         }
         console.log(this.beatTime)
     },
-
+2
     // use this for initialization
     onLoad: function () {
         this.onGoing = false;
@@ -361,4 +361,13 @@ cc.Class({
         */
         //this.beat1.setPosition(p)
     },
+
+    lateUpdate: function() {
+        let context = cc.sys.__audioSupport.context;
+        if (context.state === 'suspended') {
+            context.resume();
+            console.log(context.state);
+        }
+    }
+
 });
